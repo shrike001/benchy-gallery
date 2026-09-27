@@ -1,25 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Benchy gallery</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; color: #222; }
-    h1 { font-size: 1.25rem; font-weight: 600; }
-    .card { border: 1px solid #ccc; padding: 1rem; margin-top: 1.5rem; }
-    .photo { width: 100%; aspect-ratio: 1; background: #c4a574; margin-bottom: 0.75rem; }
-    .title { font-weight: 600; margin: 0 0 0.25rem; }
-    .note { margin: 0; color: #444; font-size: 0.95rem; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Benchy gallery — personal 3D print field journal" />
+<title>Benchy gallery</title>
+<style>
+  :root {
+    --ink: #111;
+    --speech: #1a1a1a;
+    --fact: #8a8a8a;
+    --paper: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .art {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    -webkit-mask-image: radial-gradient(ellipse 88% 88% at 50% 48%, #000 55%, transparent 100%);
+            mask-image: radial-gradient(ellipse 88% 88% at 50% 48%, #000 55%, transparent 100%);
+  }
+  .hue-warm { background: radial-gradient(ellipse at 40% 35%, #c9b8a8 0%, #e8ddd2 45%, #f7f3ef 75%, #fff 100%); }
+  .hue-cool { background: radial-gradient(ellipse at 55% 40%, #b7c4c0 0%, #d9e2df 50%, #f4f7f6 78%, #fff 100%); }
+  .hue-terracotta { background: radial-gradient(ellipse at 45% 50%, #d4b5a0 0%, #ebddd0 48%, #faf6f2 76%, #fff 100%); }
+
+  .cap { text-align: left; }
+  .cap .name {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--ink);
+    max-width: 28ch;
+  }
+  .cap .note {
+    margin-top: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--speech);
+    max-width: 32ch;
+    white-space: pre-line;
+  }
+  .cap .note.clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    white-space: normal;
+  }
+  .cap .meta {
+    margin-top: 14px;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
+    color: var(--fact);
+    max-width: 40ch;
+    text-transform: lowercase;
+  }
+
+  .desktop { display: block; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 64px 48px;
+    padding: 72px 56px 100px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  @media (min-width: 721px) and (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .card {
+    border: none; background: none; cursor: pointer;
+    font: inherit; color: inherit; text-align: left; padding: 0;
+  }
+  .card .cap { margin-top: 18px; padding: 0 4px; }
+  .card .cap .name { font-size: 14px; }
+
+  .lb {
+    display: none;
+    position: fixed; inset: 0;
+    background: #fff;
+    z-index: 20;
+    align-items: center;
+    justify-content: center;
+    gap: 56px;
+    padding: 48px;
+  }
+  .lb.open { display: flex; }
+  .lb .art { width: min(40vw, 400px); flex-shrink: 0; }
+  .lb .cap .name { font-size: 18px; max-width: 26ch; }
+  .lb .cap .note { margin-top: 16px; font-size: 16px; line-height: 1.45; max-width: 30ch; }
+  .lb .cap .meta { margin-top: 20px; }
+  .close {
+    position: absolute; top: 18px; right: 28px;
+    border: none; background: none; font-size: 22px;
+    font-family: inherit; cursor: pointer; color: var(--fact);
+  }
+
+  .mobile { display: none; }
+  .err {
+    padding: 48px 24px;
+    color: var(--fact);
+    font-size: 14px;
+  }
+
+  @media (max-width: 720px) {
+    .desktop { display: none; }
+    .mobile {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      height: 100vh;
+      height: 100dvh;
+    }
+    .rail {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 0 0 12px;
+      z-index: 2;
+    }
+    .rail-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: transform 0.35s ease;
+    }
+    .rail button {
+      border: none; background: none; cursor: pointer;
+      font-family: inherit; font-weight: 700;
+      font-size: 18px; line-height: 1.35;
+      letter-spacing: -0.03em;
+      color: #d6d6d6;
+      text-align: left;
+      padding: 0;
+    }
+    .rail button.on { color: var(--ink); font-size: 22px; }
+    .scroller {
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+    .slide {
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 24px 56px 8px;
+    }
+    .slide .art { max-width: 260px; width: 100%; margin: 0 auto; }
+    .slide .cap { margin: 24px auto 0; max-width: 260px; width: 100%; }
+  }
+</style>
 </head>
 <body>
-  <h1>Benchy gallery</h1>
-  <p>Hello-world scaffold. One fake card.</p>
-  <article class="card">
-    <div class="photo" aria-hidden="true"></div>
-    <p class="title">Chef pen holder</p>
-    <p class="note">Gift for Gelli — first wall-label test.</p>
-  </article>
+  <div class="desktop">
+    <div class="grid" id="grid"></div>
+    <div class="lb" id="lb" hidden>
+      <button class="close" type="button" id="x" aria-label="Close">×</button>
+      <div class="art" id="lb-art"></div>
+      <div class="cap">
+        <div class="name" id="lb-name"></div>
+        <div class="note" id="lb-note"></div>
+        <div class="meta" id="lb-meta"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile">
+    <nav class="rail" aria-label="Print numbers">
+      <div class="rail-inner" id="rail-inner"></div>
+    </nav>
+    <div class="scroller" id="scroller"></div>
+  </div>
+
+  <script>
+    function displayName(p) {
+      return '#' + p.n + ' ' + p.title + ' for ' + p.for;
+    }
+    function formatDate(iso) {
+      const d = new Date(iso + 'T12:00:00');
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+      return months[d.getMonth()] + ' ' + d.getDate() + ' ' + d.getFullYear();
+    }
+    function metaLine(p) {
+      const hrs = Number(p.hours);
+      const h = Number.isInteger(hrs) ? String(hrs) : String(hrs);
+      return formatDate(p.date) + ' · ' + p.printer + ' · ' + p.filament + ' · ' + h + 'hrs';
+    }
+    function firstLine(note) {
+      return String(note || '').split(/\n/)[0].trim();
+    }
+    function hueClass(p) {
+      return 'hue-' + (p.hue || 'warm');
+    }
+
+    function openLb(p) {
+      const lb = document.getElementById('lb');
+      document.getElementById('lb-art').className = 'art ' + hueClass(p);
+      document.getElementById('lb-name').textContent = displayName(p);
+      document.getElementById('lb-note').textContent = p.note || '';
+      document.getElementById('lb-meta').textContent = metaLine(p);
+      lb.hidden = false;
+      lb.classList.add('open');
+    }
+    function closeLb() {
+      const lb = document.getElementById('lb');
+      lb.classList.remove('open');
+      lb.hidden = true;
+    }
+
+    function renderDesktop(prints) {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      prints.forEach(p => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'card';
+        btn.innerHTML =
+          '<div class="art ' + hueClass(p) + '"></div>' +
+          '<div class="cap">' +
+            '<div class="name"></div>' +
+            '<div class="note clamp"></div>' +
+            '<div class="meta"></div>' +
+          '</div>';
+        btn.querySelector('.name').textContent = displayName(p);
+        btn.querySelector('.note').textContent = firstLine(p.note);
+        btn.querySelector('.meta').textContent = metaLine(p);
+        btn.addEventListener('click', () => openLb(p));
+        grid.appendChild(btn);
+      });
+      document.getElementById('x').onclick = closeLb;
+      document.getElementById('lb').addEventListener('click', e => {
+        if (e.target.id === 'lb') closeLb();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeLb();
+      });
+    }
+
+    function renderMobile(prints) {
+      const maxN = Math.max(...prints.map(p => p.n), 0);
+      const railInner = document.getElementById('rail-inner');
+      const scroller = document.getElementById('scroller');
+      railInner.innerHTML = '';
+      scroller.innerHTML = '';
+
+      const byN = new Map(prints.map(p => [p.n, p]));
+      const nums = [];
+      for (let i = 1; i <= Math.max(maxN, 5); i++) nums.push(i);
+
+      nums.forEach((n, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = '#' + n;
+        b.dataset.i = String(idx);
+        b.dataset.n = String(n);
+        railInner.appendChild(b);
+      });
+
+      prints.forEach((p, idx) => {
+        const sec = document.createElement('section');
+        sec.className = 'slide';
+        sec.dataset.i = String(idx);
+        sec.dataset.n = String(p.n);
+        sec.innerHTML =
+          '<div class="art ' + hueClass(p) + '"></div>' +
+          '<div class="cap">' +
+            '<div class="name"></div>' +
+            '<div class="note"></div>' +
+            '<div class="meta"></div>' +
+          '</div>';
+        sec.querySelector('.name').textContent = displayName(p);
+        sec.querySelector('.note').textContent = p.note || '';
+        sec.querySelector('.meta').textContent = metaLine(p);
+        scroller.appendChild(sec);
+      });
+
+      const buttons = [...railInner.querySelectorAll('button')];
+      const slides = [...scroller.querySelectorAll('.slide')];
+
+      function setOnByN(n) {
+        buttons.forEach(b => b.classList.toggle('on', +b.dataset.n === n));
+        const idx = nums.indexOf(n);
+        const offset = (idx - 2) * 28;
+        railInner.style.transform = 'translateY(' + (-offset) + 'px)';
+      }
+
+      scroller.addEventListener('scroll', () => {
+        const i = Math.round(scroller.scrollTop / scroller.clientHeight);
+        const slide = slides[Math.min(Math.max(i, 0), slides.length - 1)];
+        if (slide) setOnByN(+slide.dataset.n);
+      }, { passive: true });
+
+      buttons.forEach(b => {
+        b.addEventListener('click', () => {
+          const n = +b.dataset.n;
+          const slide = slides.find(s => +s.dataset.n === n);
+          if (slide) {
+            scroller.scrollTo({ top: slide.offsetTop, behavior: 'smooth' });
+          }
+          setOnByN(n);
+        });
+      });
+
+      const start = prints[prints.length - 1];
+      if (start) {
+        requestAnimationFrame(() => {
+          const slide = slides.find(s => +s.dataset.n === start.n);
+          if (slide) scroller.scrollTop = slide.offsetTop;
+          setOnByN(start.n);
+        });
+      }
+    }
+
+    fetch('prints.json')
+      .then(r => {
+        if (!r.ok) throw new Error('prints.json ' + r.status);
+        return r.json();
+      })
+      .then(data => {
+        const prints = (data.prints || []).slice().sort((a, b) => a.n - b.n);
+        if (!prints.length) throw new Error('no prints');
+        renderDesktop(prints);
+        renderMobile(prints);
+      })
+      .catch(err => {
+        document.body.innerHTML = '<p class="err">Could not load gallery data.</p>';
+        console.error(err);
+      });
+  </script>
 </body>
 </html>

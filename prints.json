@@ -1,0 +1,37 @@
+{
+  "prints": [
+    {
+      "n": 1,
+      "title": "Desk clip",
+      "for": "Chooby",
+      "date": "2026-08-02",
+      "note": "First successful benchy-adjacent print. Tiny win.",
+      "printer": "bambu x2d",
+      "filament": "PLA",
+      "hours": 1.2,
+      "hue": "warm"
+    },
+    {
+      "n": 2,
+      "title": "Cable comb",
+      "for": "Stef",
+      "date": "2026-08-28",
+      "note": "Ugly useful object. I love it anyway.",
+      "printer": "bambu x2d",
+      "filament": "PETG",
+      "hours": 2.0,
+      "hue": "cool"
+    },
+    {
+      "n": 3,
+      "title": "Chefs Pen Holder",
+      "for": "Angela",
+      "date": "2026-09-15",
+      "note": "printed it right off the marketplace. Wow!\nKept the watercolor desk mess in the photo on purpose — field journal, not product shot.",
+      "printer": "bambu x2d",
+      "filament": "PLA",
+      "hours": 5.5,
+      "hue": "terracotta"
+    }
+  ]
+}
