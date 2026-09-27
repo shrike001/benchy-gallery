@@ -25,6 +25,12 @@
     -webkit-mask-image: radial-gradient(ellipse 88% 88% at 50% 48%, #000 55%, transparent 100%);
             mask-image: radial-gradient(ellipse 88% 88% at 50% 48%, #000 55%, transparent 100%);
   }
+  .art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
   .hue-warm { background: radial-gradient(ellipse at 40% 35%, #c9b8a8 0%, #e8ddd2 45%, #f7f3ef 75%, #fff 100%); }
   .hue-cool { background: radial-gradient(ellipse at 55% 40%, #b7c4c0 0%, #d9e2df 50%, #f4f7f6 78%, #fff 100%); }
   .hue-terracotta { background: radial-gradient(ellipse at 45% 50%, #d4b5a0 0%, #ebddd0 48%, #faf6f2 76%, #fff 100%); }
@@ -211,10 +217,28 @@
     function hueClass(p) {
       return 'hue-' + (p.hue || 'warm');
     }
+    function renderArt(p, container) {
+      if (p.image) {
+        const img = document.createElement('img');
+        img.src = p.image;
+        img.alt = displayName(p);
+        img.loading = 'lazy';
+        if (p.image512 && p.image1024) {
+          img.srcset = p.image512 + ' 512w, ' + p.image + ' 768w, ' + p.image1024 + ' 1024w';
+          img.sizes = '(max-width: 720px) 100vw, 33vw';
+        }
+        container.appendChild(img);
+      } else {
+        container.classList.add(hueClass(p));
+      }
+    }
 
     function openLb(p) {
       const lb = document.getElementById('lb');
-      document.getElementById('lb-art').className = 'art ' + hueClass(p);
+      const artEl = document.getElementById('lb-art');
+      artEl.className = 'art';
+      artEl.innerHTML = '';
+      renderArt(p, artEl);
       document.getElementById('lb-name').textContent = displayName(p);
       document.getElementById('lb-note').textContent = p.note || '';
       document.getElementById('lb-meta').textContent = metaLine(p);
@@ -235,12 +259,14 @@
         btn.type = 'button';
         btn.className = 'card';
         btn.innerHTML =
-          '<div class="art ' + hueClass(p) + '"></div>' +
+          '<div class="art"></div>' +
           '<div class="cap">' +
             '<div class="name"></div>' +
             '<div class="note clamp"></div>' +
             '<div class="meta"></div>' +
           '</div>';
+        const artEl = btn.querySelector('.art');
+        renderArt(p, artEl);
         btn.querySelector('.name').textContent = displayName(p);
         btn.querySelector('.note').textContent = firstLine(p.note);
         btn.querySelector('.meta').textContent = metaLine(p);
@@ -282,12 +308,14 @@
         sec.dataset.i = String(idx);
         sec.dataset.n = String(p.n);
         sec.innerHTML =
-          '<div class="art ' + hueClass(p) + '"></div>' +
+          '<div class="art"></div>' +
           '<div class="cap">' +
             '<div class="name"></div>' +
             '<div class="note"></div>' +
             '<div class="meta"></div>' +
           '</div>';
+        const artEl = sec.querySelector('.art');
+        renderArt(p, artEl);
         sec.querySelector('.name').textContent = displayName(p);
         sec.querySelector('.note').textContent = p.note || '';
         sec.querySelector('.meta').textContent = metaLine(p);

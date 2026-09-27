@@ -2,36 +2,45 @@
   "prints": [
     {
       "n": 1,
-      "title": "Desk clip",
-      "for": "Chooby",
-      "date": "2026-08-02",
-      "note": "First successful benchy-adjacent print. Tiny win.",
+      "title": "3DBenchy",
+      "for": "Stef",
+      "date": "2026-09-22",
+      "note": "Hello world test print.\nI can't believe how good these printers are these days. I can even see the live printing on my phone",
       "printer": "bambu x2d",
-      "filament": "PLA",
-      "hours": 1.2,
-      "hue": "warm"
+      "filament": "gold PLA",
+      "hours": 0.5,
+      "hue": "warm",
+      "image": "art/1-768.png",
+      "image512": "art/1-512.png",
+      "image1024": "art/1-1024.png"
     },
     {
       "n": 2,
-      "title": "Cable comb",
-      "for": "Stef",
-      "date": "2026-08-28",
-      "note": "Ugly useful object. I love it anyway.",
+      "title": "Chubby cat",
+      "for": "Chooby",
+      "date": "2026-09-22",
+      "note": "Too cute to say no to. Impressed at the curves. Need to buy a file and clipper so I can smoothen the rough bits.",
       "printer": "bambu x2d",
-      "filament": "PETG",
-      "hours": 2.0,
-      "hue": "cool"
+      "filament": "white PLA",
+      "hours": 2.4,
+      "hue": "cool",
+      "image": "art/2-768.png",
+      "image512": "art/2-512.png",
+      "image1024": "art/2-1024.png"
     },
     {
       "n": 3,
       "title": "Chefs Pen Holder",
       "for": "Angela",
-      "date": "2026-09-15",
-      "note": "printed it right off the marketplace. Wow!\nKept the watercolor desk mess in the photo on purpose — field journal, not product shot.",
+      "date": "2026-09-23",
+      "note": "Angela picked this off bambu handy marketplace. Amazing!",
       "printer": "bambu x2d",
-      "filament": "PLA",
-      "hours": 5.5,
-      "hue": "terracotta"
+      "filament": "white PLA",
+      "hours": 5.4,
+      "hue": "terracotta",
+      "image": "art/3-768.png",
+      "image512": "art/3-512.png",
+      "image1024": "art/3-1024.png"
     }
   ]
 }
