@@ -53,6 +53,7 @@
     max-width: 32ch;
     white-space: pre-line;
   }
+  .note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
   .cap .note.clamp {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -207,9 +208,20 @@
       return months[d.getMonth()] + ' ' + d.getDate() + ' ' + d.getFullYear();
     }
     function metaLine(p) {
-      const hrs = Number(p.hours);
-      const h = Number.isInteger(hrs) ? String(hrs) : String(hrs);
-      return formatDate(p.date) + ' · ' + p.printer + ' · ' + p.filament + ' · ' + h + 'hrs';
+      const parts = [formatDate(p.date), p.printer, p.filament];
+      if (p.hours != null && p.hours !== '') parts.push(String(Number(p.hours)) + 'hrs');
+      return parts.join(' · ');
+    }
+    function setNote(el, text) {
+      el.textContent = '';
+      String(text || '').split(/(https:\/\/[^\s]+)/).forEach(function (part, i) {
+        if (i % 2) {
+          const a = document.createElement('a');
+          a.href = part; a.textContent = part.replace(/^https:\/\//, '');
+          a.target = '_blank'; a.rel = 'noopener noreferrer';
+          el.appendChild(a);
+        } else if (part) el.appendChild(document.createTextNode(part));
+      });
     }
     function firstLine(note) {
       return String(note || '').split(/\n/)[0].trim();
@@ -240,7 +252,7 @@
       artEl.innerHTML = '';
       renderArt(p, artEl);
       document.getElementById('lb-name').textContent = displayName(p);
-      document.getElementById('lb-note').textContent = p.note || '';
+      setNote(document.getElementById('lb-note'), p.note);
       document.getElementById('lb-meta').textContent = metaLine(p);
       lb.hidden = false;
       lb.classList.add('open');
@@ -317,7 +329,7 @@
         const artEl = sec.querySelector('.art');
         renderArt(p, artEl);
         sec.querySelector('.name').textContent = displayName(p);
-        sec.querySelector('.note').textContent = p.note || '';
+        setNote(sec.querySelector('.note'), p.note);
         sec.querySelector('.meta').textContent = metaLine(p);
         scroller.appendChild(sec);
       });

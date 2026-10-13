@@ -41,6 +41,19 @@
       "image": "art/3-768.png",
       "image512": "art/3-512.png",
       "image1024": "art/3-1024.png"
+    },
+    {
+      "n": 4,
+      "title": "Easy clean toothbrush holder",
+      "for": "Stef",
+      "date": "2026-10-13",
+      "note": "Printed this toothbrush holder. I'm delighted!! Great build quality and snapped together just nice from parts.\nFollowing the maker pearigee https://makerworld.com/@pearigee\nModel: Easy clean toothbrush holder with replacable tray https://makerworld.com/models/623494 by pearigee · 0.2 mm layers, 2 walls, 15% infill · 5 plates",
+      "printer": "bambu x2d",
+      "filament": "gold PLA",
+      "hue": "warm",
+      "image": "art/4-768.png",
+      "image512": "art/4-512.png",
+      "image1024": "art/4-1024.png"
     }
   ]
 }
