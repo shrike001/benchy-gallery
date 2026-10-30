@@ -54,6 +54,19 @@
       "image": "art/4-768.png",
       "image512": "art/4-512.png",
       "image1024": "art/4-1024.png"
+    },
+    {
+      "n": 5,
+      "title": "Princess Donut from Dungeon Crawler Carl",
+      "for": "Chooby",
+      "date": "2026-10-06",
+      "note": "Princess Donut from Dungeon Crawler Carl",
+      "printer": "bambu x2d",
+      "filament": "white + gold PLA",
+      "hue": "warm",
+      "image": "art/5-768.png",
+      "image512": "art/5-512.png",
+      "image1024": "art/5-1024.png"
     }
   ]
 }
