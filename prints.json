@@ -67,6 +67,19 @@
       "image": "art/5-768.png",
       "image512": "art/5-512.png",
       "image1024": "art/5-1024.png"
+    },
+    {
+      "n": 6,
+      "title": "Halloween ghosts",
+      "for": "our dinner party guests",
+      "date": "2026-10-26",
+      "note": "Printed this set of ghosts as giveaways for our Halloween dinner party that I'm hosting at home",
+      "printer": "bambu x2d",
+      "filament": "white PLA",
+      "hue": "cool",
+      "image": "art/6-768.png",
+      "image512": "art/6-512.png",
+      "image1024": "art/6-1024.png"
     }
   ]
 }
